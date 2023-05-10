@@ -1,7 +1,6 @@
 package com.lukic.rssvprojekt.data
 
 import android.bluetooth.BluetoothSocket
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

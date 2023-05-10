@@ -1,7 +1,9 @@
 package com.lukic.rssvprojekt
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,7 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MyNavHost(
     navController: NavHostController,
-    startDestination: String = "scan"
+    startDestination: String = "colorPicker"
 ) {
     val viewModel: BluetoothViewModel = koinViewModel()
 
@@ -30,7 +32,16 @@ fun MyNavHost(
             )
         }
         composable("colorPicker") {
-            ColorPickerScreen(onColorChange = viewModel::sendMessage)
+            val state = viewModel.state.collectAsState().value
+            ColorPickerScreen(
+                redColorValue = state.redColorValue,
+                blueColorValue = state.blueColorValue,
+                greenColorValue = state.greenColorValue,
+                onRedColorChange = viewModel::updateRedColor,
+                onBlueColorChange = viewModel::updateBlueColor,
+                onGreenColorChange = viewModel::updateGreenColor,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

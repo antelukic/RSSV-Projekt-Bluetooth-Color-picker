@@ -76,12 +76,14 @@ class BluetoothViewModel(
         bluetoothController.startDiscovery()
     }
 
-    fun sendMessage(message: String) {
-        if (message.isBlank()) return
+    private fun sendMessage() {
+        val message = with(state.value) {
+            "${redColorValue.toInt()}.${greenColorValue.toInt()}.${blueColorValue.toInt()}"
+        }
 
         viewModelScope.launch {
             val isMessageSent = bluetoothController.trySendMessage(message) == null
-            if(isMessageSent.not()) {
+            if (isMessageSent.not()) {
                 _state.update {
                     it.copy(
                         errorMessage = "Message not sent"
@@ -93,6 +95,21 @@ class BluetoothViewModel(
 
     fun stopScan() {
         bluetoothController.stopDiscovery()
+    }
+
+    fun updateRedColor(value: Float) {
+        sendMessage()
+        _state.update { it.copy(redColorValue = value) }
+    }
+
+    fun updateBlueColor(value: Float) {
+        sendMessage()
+        _state.update { it.copy(blueColorValue = value) }
+    }
+
+    fun updateGreenColor(value: Float) {
+        sendMessage()
+        _state.update { it.copy(greenColorValue = value) }
     }
 
     private fun Flow<ConnectionResult>.listen(): Job {
@@ -122,17 +139,16 @@ class BluetoothViewModel(
                     }
                 }
             }
-        }
-            .catch { throwable ->
-                throwable.printStackTrace()
-                bluetoothController.closeConnection()
-                _state.update {
-                    it.copy(
-                        isConnected = false,
-                        isConnecting = false,
-                    )
-                }
+        }.catch { throwable ->
+            throwable.printStackTrace()
+            bluetoothController.closeConnection()
+            _state.update {
+                it.copy(
+                    isConnected = false,
+                    isConnecting = false,
+                )
             }
+        }
             .launchIn(viewModelScope)
     }
 

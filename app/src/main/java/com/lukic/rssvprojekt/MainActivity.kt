@@ -18,7 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import com.lukic.rssvprojekt.presentation.BluetoothViewModel
-import com.lukic.rssvprojekt.presentation.components.ColorPickerScreen
 import com.lukic.rssvprojekt.ui.theme.RSSVProjektTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -79,14 +78,20 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                LaunchedEffect(key1 = state.isConnecting) {
+                    Toast.makeText(
+                        applicationContext,
+                        "You are connecting",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
                 LaunchedEffect(key1 = state.isConnected) {
-                    if (state.isConnected) {
-                        Toast.makeText(
-                            applicationContext,
-                            "You are connected",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+                    Toast.makeText(
+                        applicationContext,
+                        "You are connected",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
                 val navController = rememberNavController()
@@ -98,23 +103,14 @@ class MainActivity : ComponentActivity() {
                     }
                     MyNavHost(navController = navController)
                     when {
-                        state.isConnecting -> {
-                            Toast.makeText(
-                                applicationContext,
-                                "You are connecting",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
                         state.isConnected -> {
                             navController.navigate("colorPicker")
                             viewModel.waitForIncomingConnections()
-                            ColorPickerScreen(onColorChange = viewModel::sendMessage)
                         }
-
-                        else -> {
-                            navController.navigate("scan")
-                        }
+//
+//                        else -> {
+//                            navController.navigate("scan")
+//                        }
                     }
                 }
             }

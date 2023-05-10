@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.lukic.rssvprojekt"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -65,5 +65,4 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 
     implementation("io.insert-koin:koin-androidx-compose:3.4.2")
-    implementation("com.github.skydoves:colorpicker-compose:1.0.2")
 }
