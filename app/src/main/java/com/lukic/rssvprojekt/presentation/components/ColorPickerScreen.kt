@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ColorPickerScreen(
@@ -18,6 +19,7 @@ fun ColorPickerScreen(
     modifier: Modifier = Modifier
 ) {
     val controller = rememberColorPickerController()
+    controller.setDebounceDuration(500.milliseconds.inWholeMilliseconds)
 
     Box(modifier = modifier) {
         HsvColorPicker(
@@ -29,11 +31,17 @@ fun ColorPickerScreen(
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
                 onColorChange(
-                    with(colorEnvelope.color) {
-                        "($red,$green,$blue)"
-                    }
+                    colorEnvelope.getRGB()
                 )
             }
         )
     }
+}
+
+private fun ColorEnvelope.getRGB(): String {
+    var colorToSend = ""
+    if(color.red >= 0.50) colorToSend += "R"
+    if(color.green >= 0.50) colorToSend += "G"
+    if(color.blue >= 0.50) colorToSend += "B"
+    return colorToSend
 }

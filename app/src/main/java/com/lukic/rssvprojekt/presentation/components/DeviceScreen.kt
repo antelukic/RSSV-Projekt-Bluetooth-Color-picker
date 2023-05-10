@@ -25,7 +25,6 @@ fun DeviceScreen(
     onStartScan: () -> Unit,
     onStopScan: () -> Unit,
     onDeviceClick: (BluetoothDeviceDomain) -> Unit,
-    onStartServer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -51,10 +50,6 @@ fun DeviceScreen(
 
             Button(onClick = onStopScan) {
                 Text(text = "Stop scan")
-            }
-
-            Button(onClick = onStartServer) {
-                Text(text = "Start server")
             }
         }
     }

@@ -77,6 +77,8 @@ class BluetoothViewModel(
     }
 
     fun sendMessage(message: String) {
+        if (message.isBlank()) return
+
         viewModelScope.launch {
             val isMessageSent = bluetoothController.trySendMessage(message) == null
             if(isMessageSent.not()) {

@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.util.Log
 import com.lukic.rssvprojekt.data.mapper.toBluetoothDeviceDomain
 import com.lukic.rssvprojekt.domain.ConnectionResult
 import com.lukic.rssvprojekt.domain.controller.BluetoothController
@@ -165,7 +166,7 @@ internal class AndroidBluetoothController(
 
             currentClientSocket = bluetoothAdapter
                 ?.getRemoteDevice(device.address)
-                ?.createRfcommSocketToServiceRecord(
+                ?.createInsecureRfcommSocketToServiceRecord(
                     UUID.fromString(SERVICE_UUID)
                 )
             stopDiscovery()
@@ -198,7 +199,9 @@ internal class AndroidBluetoothController(
 
         if (dataTransferService == null) return null
 
-        dataTransferService?.sendMessage(message.toByteArray())
+        val messageToSend = "${message.length}$message"
+        val isSendMessageSuccessfull = dataTransferService?.sendMessage(messageToSend.toByteArray())
+        Log.d("AndroidBluetoothController", "trySendMessage: $messageToSend isSuccessfull: $isSendMessageSuccessfull")
         return message
     }
 
@@ -232,6 +235,6 @@ internal class AndroidBluetoothController(
     }
 
     companion object {
-        const val SERVICE_UUID = "27b7d1da-08c7-4505-a6d1-2459987e5e2d"
+        const val SERVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB"
     }
 }

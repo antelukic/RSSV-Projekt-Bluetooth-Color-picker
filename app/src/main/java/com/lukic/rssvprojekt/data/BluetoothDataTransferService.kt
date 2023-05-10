@@ -1,6 +1,7 @@
 package com.lukic.rssvprojekt.data
 
 import android.bluetooth.BluetoothSocket
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,6 +24,8 @@ class BluetoothDataTransferService(
                 socket.inputStream.read(buffer)
             } catch (e: IOException) {
                 e.printStackTrace()
+                socket.close()
+                return@flow
             }
 
             emit(buffer.decodeToString())

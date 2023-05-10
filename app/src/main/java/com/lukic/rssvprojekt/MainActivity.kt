@@ -8,22 +8,17 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.lukic.rssvprojekt.presentation.BluetoothViewModel
 import com.lukic.rssvprojekt.presentation.components.ColorPickerScreen
-import com.lukic.rssvprojekt.presentation.components.DeviceScreen
 import com.lukic.rssvprojekt.ui.theme.RSSVProjektTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -94,33 +89,31 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val navController = rememberNavController()
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    BackHandler {
+                        viewModel.disconnectFromDevice()
+                    }
+                    MyNavHost(navController = navController)
                     when {
                         state.isConnecting -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                CircularProgressIndicator()
-                                Text(text = "Connecting")
-                            }
+                            Toast.makeText(
+                                applicationContext,
+                                "You are connecting",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
 
                         state.isConnected -> {
+                            navController.navigate("colorPicker")
+                            viewModel.waitForIncomingConnections()
                             ColorPickerScreen(onColorChange = viewModel::sendMessage)
                         }
 
                         else -> {
-                            DeviceScreen(
-                                state = state,
-                                onStartScan = viewModel::startScan,
-                                onStopScan = viewModel::stopScan,
-                                onDeviceClick = viewModel::connectToDevice,
-                                onStartServer = viewModel::waitForIncomingConnections,
-                                modifier = Modifier.fillMaxSize()
-                            )
+                            navController.navigate("scan")
                         }
                     }
                 }
